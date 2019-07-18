@@ -1,4 +1,4 @@
-package com.github.andrewgazelka.conversion
+package com.github.ezauton.conversion
 
 import org.junit.jupiter.api.Test
 

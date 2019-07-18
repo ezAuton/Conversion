@@ -1,21 +1,28 @@
-package com.github.andrewgazelka.conversion
+package com.github.ezauton.conversion
 
-class Distance(override val value: Double) : SIUnit<Distance> {
-    operator fun div(other: Time) = LinearVelocity(value / other.value)
+class Distance(override val value: Double) :
+    SIUnit<Distance> {
+    operator fun div(other: Time) =
+        LinearVelocity(value / other.value)
 }
 
 class Angle(override val value: Double) : SIUnit<Angle> {
-    operator fun div(other: Time) = Angle(value / other.value)
+    operator fun div(other: Time) =
+        Angle(value / other.value)
 }
 
 class Time(override val value: Double) : SIUnit<Time>
 
-class LinearVelocity(override val value: Double) : SIUnit<LinearVelocity> {
-    operator fun times(other: Time) = Distance(value * other.value)
+class LinearVelocity(override val value: Double) :
+    SIUnit<LinearVelocity> {
+    operator fun times(other: Time) =
+        Distance(value * other.value)
 }
 
-class AngularVelocity(override val value: Double) : SIUnit<AngularVelocity> {
-    operator fun times(other: Time) = Angle(value * other.value)
+class AngularVelocity(override val value: Double) :
+    SIUnit<AngularVelocity> {
+    operator fun times(other: Time) =
+        Angle(value * other.value)
 }
 
 class Scalar(override val value: Double): SIUnit<Scalar>

@@ -1,4 +1,4 @@
-package com.github.andrewgazelka.conversion
+package com.github.ezauton.conversion
 
 import java.io.Serializable
 import java.util.*
@@ -31,9 +31,11 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
         this.elements = x
     }
 
-    operator fun <T : SIUnit<T>> times(unit: T) = ConcreteVector(mul(unit.value), unit::class)
+    operator fun <T : SIUnit<T>> times(unit: T) =
+        ConcreteVector(mul(unit.value), unit::class)
 
-    fun <T: SIUnit<T>> withUnit(kClass: KClass<out T>) = ConcreteVector(this, kClass)
+    fun <T: SIUnit<T>> withUnit(kClass: KClass<out T>) =
+        ConcreteVector(this, kClass)
 
     fun toMeasureableVector() = withUnit(Scalar::class)
 

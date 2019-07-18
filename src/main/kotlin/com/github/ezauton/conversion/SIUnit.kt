@@ -1,4 +1,4 @@
-package com.github.andrewgazelka.conversion
+package com.github.ezauton.conversion
 
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
@@ -12,7 +12,9 @@ interface SIUnit<T: SIUnit<T>> {
         fun <T : SIUnit<T>> of(double: Double, kClass: KClass<out T>): T {
             return when(kClass){
                 Distance::class -> Distance(double)
-                AngularVelocity::class -> AngularVelocity(double)
+                AngularVelocity::class -> AngularVelocity(
+                    double
+                )
                 Time::class -> Time(double)
                 else -> throw IllegalArgumentException("that unit has not yet been defined")
             } as T
