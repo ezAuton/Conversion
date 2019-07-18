@@ -6,7 +6,7 @@ class KotlinTest {
 
     @Test
     fun test123(){
-        val a = SIUnit.of(1.0, Meter::class)
-        val b = SIUnit.of(2.0, Second::class)
+        val a = SIUnit.of(1.0, Distance::class)
+        val b = SIUnit.of(2.0, Time::class)
     }
 }

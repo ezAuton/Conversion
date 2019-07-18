@@ -1,10 +1,23 @@
 package com.github.andrewgazelka.conversion
 
-class Meter(override val value: Double) : SIUnit<Meter> {
-    operator fun div(other: Second) = Velocity(value / other.value)
+class Distance(override val value: Double) : SIUnit<Distance> {
+    operator fun div(other: Time) = LinearVelocity(value / other.value)
 }
-class Second(override val value: Double) : SIUnit<Second>
-class Velocity(override val value: Double) : SIUnit<Velocity>
+
+class Angle(override val value: Double) : SIUnit<Angle> {
+    operator fun div(other: Time) = Angle(value / other.value)
+}
+
+class Time(override val value: Double) : SIUnit<Time>
+
+class LinearVelocity(override val value: Double) : SIUnit<LinearVelocity> {
+    operator fun times(other: Time) = Distance(value * other.value)
+}
+
+class AngularVelocity(override val value: Double) : SIUnit<AngularVelocity> {
+    operator fun times(other: Time) = Angle(value * other.value)
+}
+
 class Scalar(override val value: Double): SIUnit<Scalar>
 
 object Units {
@@ -13,12 +26,18 @@ object Units {
     fun ft(value: Double) = meter(value / 3.28084)
 
     @JvmStatic
-    fun meter(value: Double) = Meter(value)
+    fun rad(value: Double) = Angle(value / 3.28084)
 
     @JvmStatic
-    fun mps(value: Double) = Velocity(value)
+    fun deg(value: Double) = rad(value * Math.PI / 180)
 
     @JvmStatic
-    fun sec(value: Double) = Second(value)
+    fun meter(value: Double) = Distance(value)
+
+    @JvmStatic
+    fun mps(value: Double) = AngularVelocity(value)
+
+    @JvmStatic
+    fun sec(value: Double) = Time(value)
 
 }
