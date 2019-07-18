@@ -19,7 +19,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-group 'com.github.andrewgazelka'
+group 'com.github.ezauton'
 version '1.0-SNAPSHOT'
 
 repositories {
