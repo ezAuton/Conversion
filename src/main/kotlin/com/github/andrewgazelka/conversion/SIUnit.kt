@@ -10,8 +10,9 @@ interface SIUnit<T: SIUnit<T>> {
         fun <T : SIUnit<T>> of(double: Double, kClass: KClass<out T>): T {
             return when(kClass){
                 Meter::class -> Meter(double)
-
-                else -> throw IllegalArgumentException("")
+                Velocity::class -> Velocity(double)
+                Second::class -> Second(double)
+                else -> throw IllegalArgumentException("that unit has not yet been defined")
             } as T
         }
     }

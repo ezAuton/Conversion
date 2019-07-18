@@ -3,7 +3,7 @@ package com.github.andrewgazelka.conversion;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class JavaTest {
+class JavaTest {
 
     @Test
     void testUnit(){

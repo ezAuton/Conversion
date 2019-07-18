@@ -16,6 +16,9 @@ object Units {
     fun meter(value: Double) = Meter(value)
 
     @JvmStatic
+    fun mps(value: Double) = Velocity(value)
+
+    @JvmStatic
     fun sec(value: Double) = Second(value)
 
 }
