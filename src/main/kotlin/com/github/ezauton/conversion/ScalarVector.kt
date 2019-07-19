@@ -32,7 +32,7 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
     }
 
     operator fun <T : SIUnit<T>> times(unit: T) =
-        ConcreteVector(mul(unit.value), unit::class)
+        ConcreteVector(times(unit.value), unit::class)
 
     fun <T: SIUnit<T>> withUnit(kClass: KClass<out T>) =
         ConcreteVector(this, kClass)
@@ -84,18 +84,18 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
 
     fun dot(other: ScalarVector): Double {
         other.assertDimension(dimension)
-        return mul(other).sum()
+        return times(other).sum()
     }
 
     fun dist(other: ScalarVector): Double {
         other.assertDimension(dimension)
-        val sub = this.sub(other)
+        val sub = this - other
         return sub.mag()
     }
 
     fun dist2(other: ScalarVector): Double {
         other.assertDimension(dimension)
-        val sub = this.sub(other)
+        val sub = this - other
         return sub.mag2()
     }
 
@@ -125,11 +125,11 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
         return ScalarVector(*temp)
     }
 
-    fun sub(other: ScalarVector): ScalarVector {
+    operator fun minus(other: ScalarVector): ScalarVector {
         return applyOperator(other) { first, second -> first - second }
     }
 
-    fun mul(other: ScalarVector): ScalarVector {
+    operator fun times(other: ScalarVector): ScalarVector {
         return applyOperator(other) { first, second -> first * second }
     }
 
@@ -161,12 +161,13 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
         return ScalarVector(toReturn)
     }
 
-    fun mul(scalar: Double): ScalarVector {
-        return mul(of(scalar, dimension))
+    operator fun times(scalar: Double): ScalarVector {
+        val scalarAsVector = of(scalar, dimension)
+        return scalarAsVector.times(this)
     }
 
     operator fun div(scalar: Double): ScalarVector {
-        return mul(1.0 / scalar)
+        return times(1.0 / scalar)
     }
 
     /**

@@ -1,50 +1,93 @@
 package com.github.ezauton.conversion
 
+import kotlin.reflect.KClass
+
+interface LinearUnit
+interface AngularUnit
+
+interface TimeDerivative<T> {
+
+    class Default<T : SIUnit<T>>(private val currentValue: Double, private val newClass: KClass<T>) : TimeDerivative<T> {
+        override fun times(time: Time) = SIUnit.of(currentValue * time.value, newClass)
+    }
+
+    operator fun times(time: Time): T
+}
+
+interface TimeIntegral<T> {
+
+    class Default<T : SIUnit<T>>(private val currentValue: Double, private val newClass: KClass<T>) : TimeIntegral<T> {
+        override fun div(time: Time) = SIUnit.of(currentValue / time.value, newClass)
+    }
+
+    operator fun div(time: Time): T
+}
+
 class Distance(override val value: Double) :
-    SIUnit<Distance> {
-    operator fun div(other: Time) =
-        LinearVelocity(value / other.value)
-}
+        SIUnit<Distance>,
+        LinearUnit,
+        TimeIntegral<LinearVelocity> by TimeIntegral.Default(value, LinearVelocity::class)
 
-class Angle(override val value: Double) : SIUnit<Angle> {
-    operator fun div(other: Time) =
-        Angle(value / other.value)
-}
+class Angle(override val value: Double) :
+        SIUnit<Angle>,
+        AngularUnit,
+        TimeIntegral<AngularVelocity> by TimeIntegral.Default(value, AngularVelocity::class)
 
-class Time(override val value: Double) : SIUnit<Time>
+class Time(override val value: Double) : SIUnit<Time> {
+    val millisL get() = millis.toLong()
+    val millis get() = value * 1_000
+    val seconds get() = value
+    val minutes get() = seconds / 60
+    val hours get() = minutes / 60
+    val days get() = hours / 24
+}
 
 class LinearVelocity(override val value: Double) :
-    SIUnit<LinearVelocity> {
-    operator fun times(other: Time) =
-        Distance(value * other.value)
-}
+        SIUnit<LinearVelocity>,
+        LinearUnit,
+        TimeDerivative<Distance> by TimeDerivative.Default(value, Distance::class)
 
 class AngularVelocity(override val value: Double) :
-    SIUnit<AngularVelocity> {
-    operator fun times(other: Time) =
-        Angle(value * other.value)
-}
+        SIUnit<AngularVelocity>,
+        AngularUnit,
+        TimeDerivative<Angle> by TimeDerivative.Default(value, Angle::class)
 
-class Scalar(override val value: Double): SIUnit<Scalar>
+class AngularAcceleration(override val value: Double) :
+        SIUnit<AngularVelocity>,
+        AngularUnit,
+        TimeDerivative<AngularVelocity> by TimeDerivative.Default(value, AngularVelocity::class)
+
+class Scalar(override val value: Double) : SIUnit<Scalar>
+
+fun now() = Units.now() // kinda jank
 
 object Units {
 
-    @JvmStatic
-    fun ft(value: Double) = meter(value / 3.28084)
+    fun now() = System.currentTimeMillis().millis
 
     @JvmStatic
-    fun rad(value: Double) = Angle(value / 3.28084)
+    fun ft(value: Number) = meter(value.toDouble() / 3.28084)
 
     @JvmStatic
-    fun deg(value: Double) = rad(value * Math.PI / 180)
+    fun rad(value: Number) = Angle(value.toDouble() / 3.28084)
 
     @JvmStatic
-    fun meter(value: Double) = Distance(value)
+    fun deg(value: Number) = rad(value.toDouble() * Math.PI / 180)
 
     @JvmStatic
-    fun mps(value: Double) = AngularVelocity(value)
+    fun meter(value: Number) = Distance(value.toDouble())
 
     @JvmStatic
-    fun sec(value: Double) = Time(value)
+    fun mps(value: Number) = LinearVelocity(value.toDouble())
+
+    @JvmStatic
+    fun sec(value: Number) = Time(value.toDouble())
+
+    @JvmStatic
+    fun ms(value: Number) = Time(value.toDouble() / 1_000)
 
 }
+
+val Number.millis get() = Units.ms(toDouble())
+val Number.meters get() = Units.meter(toDouble())
+val Number.seconds get() = Units.sec(toDouble())
