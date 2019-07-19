@@ -22,6 +22,8 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
 
     operator fun plus(other: ConcreteVector<T>): ConcreteVector<out T> = (scalarVector + other.scalarVector).withUnit(other.type)
 
+    operator fun times(scalar: Number) = (scalarVector * scalar)
+
     operator fun get(i: Int) = SIUnit.of(scalarVector[i], type)
 
     fun dist(other: ConcreteVector<T>) =
@@ -31,10 +33,3 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
     fun sum() = SIUnit.of(scalarVector.sum(), type)
     operator fun minus(other: ConcreteVector<T>) = ConcreteVector(scalarVector - other.scalarVector, type)
 }
-
-fun <T : SIUnit<T>> cvec(type: KClass<out T>, vararg x: Double) = vec(*x).withUnit(type)
-
-fun <T : SIUnit<T>> min(a: ConcreteVector<T>, b: ConcreteVector<T>) = if (a.scalarVector.mag2() > b.scalarVector.mag2()) b else a
-
-fun <T : SIUnit<T>> max(a: ConcreteVector<T>, b: ConcreteVector<T>) = if (a.scalarVector.mag2() < b.scalarVector.mag2()) b else a
-

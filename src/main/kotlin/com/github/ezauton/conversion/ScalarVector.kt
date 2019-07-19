@@ -161,8 +161,8 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
         return ScalarVector(toReturn)
     }
 
-    operator fun times(scalar: Double): ScalarVector {
-        val scalarAsVector = of(scalar, dimension)
+    operator fun times(scalar: Number): ScalarVector {
+        val scalarAsVector = of(scalar.toDouble(), dimension)
         return scalarAsVector.times(this)
     }
 

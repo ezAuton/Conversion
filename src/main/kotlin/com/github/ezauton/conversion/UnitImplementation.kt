@@ -57,6 +57,11 @@ class AngularAcceleration(override val value: Double) :
         AngularUnit,
         TimeDerivative<AngularVelocity> by TimeDerivative.Default(value, AngularVelocity::class)
 
+class LinearAcceleration(override val value: Double) :
+        SIUnit<LinearAcceleration>,
+        LinearUnit,
+        TimeDerivative<LinearVelocity> by TimeDerivative.Default(value, LinearVelocity::class)
+
 class Scalar(override val value: Double) : SIUnit<Scalar>
 
 fun now() = Units.now() // kinda jank
@@ -88,6 +93,18 @@ object Units {
 
 }
 
-val Number.millis get() = Units.ms(toDouble())
-val Number.meters get() = Units.meter(toDouble())
-val Number.seconds get() = Units.sec(toDouble())
+val Number.mps get() = Units.mps(this)
+val Number.millis get() = Units.ms(this)
+val Number.meters get() = Units.meter(this)
+val Number.seconds get() = Units.sec(this)
+
+fun <T : SIUnit<T>> cvec(type: KClass<out T>, vararg x: Double) = vec(*x).withUnit(type)
+
+fun <T : SIUnit<T>> min(a: ConcreteVector<T>, b: ConcreteVector<T>) = if (a.scalarVector.mag2() > b.scalarVector.mag2()) b else a
+fun <T : SIUnit<T>> max(a: ConcreteVector<T>, b: ConcreteVector<T>) = if (a.scalarVector.mag2() < b.scalarVector.mag2()) b else a
+
+fun <T : SIUnit<T>> min(a: T, b: T) = if (a > b ) b else a
+fun <T : SIUnit<T>> max(a: T, b: T) = if (a < b ) b else a
+
+operator fun <T : SIUnit<T>> Number.times(unit: SIUnit<T>) = unit.times(this)
+operator fun <T : SIUnit<T>> Number.times(cv: ConcreteVector<T>) = cv.times(this)
