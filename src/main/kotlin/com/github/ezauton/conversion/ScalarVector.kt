@@ -145,6 +145,10 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
     return elements.iterator()
   }
 
+  val x get() = get(0)
+  val y get() = get(1)
+  val z get() = get(2)
+
   /**
    * Remove instances of a number from a vector
    *

@@ -20,6 +20,10 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
 
   val isFinite: Boolean get() = scalarVector.isFinite
 
+  val x get() = get(0)
+  val y get() = get(1)
+  val z get() = get(2)
+
   operator fun plus(other: ConcreteVector<T>): ConcreteVector<out T> = (scalarVector + other.scalarVector).withUnit(other.type)
 
   operator fun times(scalar: Number) = (scalarVector * scalar)
