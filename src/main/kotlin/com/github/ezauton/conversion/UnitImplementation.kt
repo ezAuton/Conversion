@@ -95,6 +95,7 @@ object Units {
 
 val Number.mps get() = Units.mps(this)
 val Number.millis get() = Units.ms(this)
+val Number.ms get() = Units.ms(this)
 val Number.meters get() = Units.meter(this)
 val Number.seconds get() = Units.sec(this)
 
