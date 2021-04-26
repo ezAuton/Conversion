@@ -6,7 +6,7 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
 
   companion object {
     val DEGENERATE = ScalarVector().toMeasureableVector() // degenerate (0-D) does not have a unit
-    fun <T : SIUnit<T>> empty(kClass: KClass<T>) = vec().withUnit(kClass)
+    fun <T : SIUnit<T>> empty(kClass: KClass<T>) = scalarVec().withUnit(kClass)
     fun <T : SIUnit<T>> of(vararg values: T): ConcreteVector<T> {
       require(values.isNotEmpty()) { "there must be at least one value. If there is not use empty()" }
       return ConcreteVector(
@@ -24,7 +24,7 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
   val y get() = get(1)
   val z get() = get(2)
 
-  operator fun plus(other: ConcreteVector<T>): ConcreteVector<out T> = (scalarVector + other.scalarVector).withUnit(other.type)
+  operator fun plus(other: ConcreteVector<T>): ConcreteVector<T> = (scalarVector + other.scalarVector).withUnit(other.type)
 
   operator fun div(scalar: Number) = times(1.0 / scalar.toDouble())
 
@@ -51,3 +51,5 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
 }
 
 fun scalar(vararg vector: ConcreteVector<*>) = vector.map { it.scalarVector }
+
+inline fun <reified T : SIUnit<T>> vec(vararg elems: Double) = ConcreteVector(scalarVec(*elems), T::class)

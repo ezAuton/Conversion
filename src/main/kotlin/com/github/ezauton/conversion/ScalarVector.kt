@@ -257,4 +257,4 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
   }
 }
 
-fun vec(vararg x: Double) = ScalarVector(*x)
+fun scalarVec(vararg x: Double) = ScalarVector(*x)
