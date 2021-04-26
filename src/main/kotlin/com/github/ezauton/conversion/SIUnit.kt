@@ -1,5 +1,6 @@
 package com.github.ezauton.conversion
 
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 
@@ -32,9 +33,11 @@ interface SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
 
   fun abs() = of(value.absoluteValue, this::class)
 
-  val isPositive get() = this.value > 0.0
-  val isNegative get() = this.value < 0.0
-  val isZero get() = this.value == 0.0
+  val isPositive get() = this.value > 0.001
+  val isNegative get() = this.value < 0.001
+  val isZero get() = abs(this.value) <= 0.001
+  val isExactZero get() = this.value == 0.0
+  val isNonZero get() = abs(this.value) > 0.001
   val isFinite get() = this.value.isFinite()
   val isInfinite get() = this.value.isInfinite()
   val isNaN get() = this.value.isNaN()
