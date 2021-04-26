@@ -44,3 +44,12 @@ interface SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
 
   operator fun unaryMinus() = this * (-1)
 }
+
+operator fun <T : SIUnit<T>> Number.times(unit: T): T = SIUnit.of(unit.value * toDouble(), unit::class)
+operator fun <T : SIUnit<T>> Number.div(unit: T): T = SIUnit.of(unit.value / toDouble(), unit::class)
+
+fun <T: SIUnit<T>> Number.withUnit(type: KClass<T>) = SIUnit.of(toDouble(), type)
+
+inline fun <reified T: SIUnit<T>> zero() = SIUnit.of(0.0, T::class)
+inline fun <reified T: SIUnit<T>> one() = SIUnit.of(1.0, T::class)
+inline fun <reified T: SIUnit<T>> of(value: Double) = SIUnit.of(value, T::class)

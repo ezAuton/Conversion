@@ -175,8 +175,8 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
     return scalarAsVector.times(this)
   }
 
-  operator fun div(scalar: Double): ScalarVector {
-    return times(1.0 / scalar)
+  operator fun div(scalar: Number): ScalarVector {
+    return times(1.0 / scalar.toDouble())
   }
 
   /**

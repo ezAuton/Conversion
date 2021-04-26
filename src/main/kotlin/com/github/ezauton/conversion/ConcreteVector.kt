@@ -26,6 +26,8 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
 
   operator fun plus(other: ConcreteVector<T>): ConcreteVector<out T> = (scalarVector + other.scalarVector).withUnit(other.type)
 
+  operator fun div(scalar: Number) = times(1.0 / scalar.toDouble())
+
   operator fun times(scalar: Number) = (scalarVector * scalar).withUnit(type)
 
   fun normalized() = scalarVector.normalized().withUnit(type)
