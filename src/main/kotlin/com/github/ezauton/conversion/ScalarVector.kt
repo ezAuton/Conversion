@@ -7,6 +7,11 @@ import kotlin.reflect.KClass
 
 typealias Operator = (Double, Double) -> Double
 
+
+operator fun Double.times(n: ScalarVector): ScalarVector {
+  return n * this
+}
+
 /**
  * An n-dimensional, immutable vector.
  */

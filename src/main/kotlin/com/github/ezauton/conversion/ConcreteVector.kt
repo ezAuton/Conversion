@@ -26,7 +26,9 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
 
   operator fun plus(other: ConcreteVector<T>): ConcreteVector<out T> = (scalarVector + other.scalarVector).withUnit(other.type)
 
-  operator fun times(scalar: Number) = (scalarVector * scalar)
+  operator fun times(scalar: Number) = (scalarVector * scalar).withUnit(type)
+
+  fun normalized() = scalarVector.normalized().withUnit(type)
 
   operator fun get(i: Int) = SIUnit.of(scalarVector[i], type)
 
@@ -40,7 +42,10 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
 
   fun mag() = SIUnit.of(scalarVector.mag(), type)
   fun sum() = SIUnit.of(scalarVector.sum(), type)
+
+
   operator fun minus(other: ConcreteVector<T>) = ConcreteVector(scalarVector - other.scalarVector, type)
+
 }
 
 fun scalar(vararg vector: ConcreteVector<*>) = vector.map { it.scalarVector }
