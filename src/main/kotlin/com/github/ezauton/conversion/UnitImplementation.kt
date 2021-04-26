@@ -14,6 +14,10 @@ interface TimeDerivative<T> {
   operator fun times(time: Time): T
 }
 
+operator fun <T> Time.times(timeDerivative: TimeDerivative<T>): T {
+    return timeDerivative * this
+}
+
 interface TimeIntegral<T> {
 
   class Default<T : SIUnit<T>>(private val currentValue: Double, private val newClass: KClass<T>) : TimeIntegral<T> {
