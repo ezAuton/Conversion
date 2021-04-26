@@ -42,3 +42,5 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
   fun sum() = SIUnit.of(scalarVector.sum(), type)
   operator fun minus(other: ConcreteVector<T>) = ConcreteVector(scalarVector - other.scalarVector, type)
 }
+
+fun scalar(vararg vector: ConcreteVector<*>) = vector.map { it.scalarVector }
