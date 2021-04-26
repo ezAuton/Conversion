@@ -41,6 +41,7 @@ interface SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
   val isFinite get() = this.value.isFinite()
   val isInfinite get() = this.value.isInfinite()
   val isNaN get() = this.value.isNaN()
+  val isInvalid get() = this.isNaN
 
   operator fun unaryMinus() = this * (-1)
 }
@@ -51,5 +52,6 @@ operator fun <T : SIUnit<T>> Number.div(unit: T): T = SIUnit.of(unit.value / toD
 fun <T: SIUnit<T>> Number.withUnit(type: KClass<T>) = SIUnit.of(toDouble(), type)
 
 inline fun <reified T: SIUnit<T>> zero() = SIUnit.of(0.0, T::class)
-inline fun <reified T: SIUnit<T>> one() = SIUnit.of(1.0, T::class)
-inline fun <reified T: SIUnit<T>> of(value: Double) = SIUnit.of(value, T::class)
+inline fun <reified T: SIUnit<T>> invalid() = SIUnit.of(Double.NaN, T::class)
+inline fun <reified T: SIUnit<T>> SI(value: Double) = SIUnit.of(value, T::class)
+val <T: SIUnit<T>> T.s get() = value

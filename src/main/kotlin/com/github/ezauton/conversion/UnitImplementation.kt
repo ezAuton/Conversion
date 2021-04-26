@@ -93,11 +93,16 @@ object Units {
 
 }
 
+val Number.radians get() = Units.rad(this)
+val Number.degrees get() = Units.deg(this)
+
 val Number.mps get() = Units.mps(this)
 val Number.millis get() = Units.ms(this)
 val Number.ms get() = Units.ms(this)
 val Number.meters get() = Units.meter(this)
 val Number.seconds get() = Units.sec(this)
+
+val sec = 1.0.seconds
 
 fun <T : SIUnit<T>> cvec(type: KClass<out T>, vararg x: Double) = vec(*x).withUnit(type)
 
@@ -106,6 +111,8 @@ fun <T : SIUnit<T>> max(a: ConcreteVector<T>, b: ConcreteVector<T>) = if (a.scal
 
 fun <T : SIUnit<T>> min(a: T, b: T) = if (a > b) b else a
 fun <T : SIUnit<T>> max(a: T, b: T) = if (a < b) b else a
+
+val Angle.radians get() = value
 
 operator fun <T : SIUnit<T>> Number.times(unit: SIUnit<T>) = unit.times(this)
 operator fun <T : SIUnit<T>> Number.times(cv: ConcreteVector<T>) = cv.times(this)
