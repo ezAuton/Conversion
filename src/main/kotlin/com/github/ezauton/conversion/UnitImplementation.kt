@@ -15,8 +15,18 @@ interface TimeDerivative<T> {
 }
 
 operator fun <T> Time.times(timeDerivative: TimeDerivative<T>): T {
-    return timeDerivative * this
+  return timeDerivative * this
 }
+
+interface DistanceDerivative<T> {
+
+  class Default<T : SIUnit<T>>(private val currentValue: Double, private val newClass: KClass<T>) : DistanceDerivative<T> {
+    override fun times(distance: Distance) = SIUnit.of(currentValue * distance.value, newClass)
+  }
+
+  operator fun times(distance: Distance): T
+}
+
 
 interface TimeIntegral<T> {
 
@@ -27,6 +37,15 @@ interface TimeIntegral<T> {
   operator fun div(time: Time): T
 }
 
+interface DistanceIntegral<T> {
+
+  class Default<T : SIUnit<T>>(private val currentValue: Double, private val newClass: KClass<T>) : DistanceIntegral<T> {
+    override fun div(distance: Distance) = SIUnit.of(currentValue / distance.value, newClass)
+  }
+
+  operator fun div(distance: Distance): T
+}
+
 class Distance(override val value: Double) :
   SIUnit<Distance>,
   LinearUnit,
@@ -35,7 +54,8 @@ class Distance(override val value: Double) :
 class Angle(override val value: Double) :
   SIUnit<Angle>,
   AngularUnit,
-  TimeIntegral<AngularVelocity> by TimeIntegral.Default(value, AngularVelocity::class)
+  TimeIntegral<AngularVelocity> by TimeIntegral.Default(value, AngularVelocity::class),
+  DistanceDerivative<Distance> by DistanceDerivative.Default(value, Distance::class) // TODO: is this right to call it a derivative?
 
 class Time(override val value: Double) : SIUnit<Time> {
   val millisL get() = millis.toLong()
@@ -54,12 +74,15 @@ class LinearVelocity(override val value: Double) :
 class AngularVelocity(override val value: Double) :
   SIUnit<AngularVelocity>,
   AngularUnit,
-  TimeDerivative<Angle> by TimeDerivative.Default(value, Angle::class)
+  TimeDerivative<Angle> by TimeDerivative.Default(value, Angle::class),
+  DistanceDerivative<LinearVelocity> by DistanceDerivative.Default(value, LinearVelocity::class)
 
 class AngularAcceleration(override val value: Double) :
   SIUnit<AngularVelocity>,
   AngularUnit,
-  TimeDerivative<AngularVelocity> by TimeDerivative.Default(value, AngularVelocity::class)
+  TimeDerivative<AngularVelocity> by TimeDerivative.Default(value, AngularVelocity::class),
+  DistanceDerivative<AngularVelocity> by DistanceDerivative.Default(value, AngularVelocity::class)
+
 
 class LinearAcceleration(override val value: Double) :
   SIUnit<LinearAcceleration>,
