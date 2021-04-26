@@ -29,6 +29,11 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
   fun dist(other: ConcreteVector<T>) =
     SIUnit.of(scalarVector.dist(other.scalarVector), type)
 
+  fun dist2(other: ConcreteVector<T>) =
+    SIUnit.of(scalarVector.dist2(other.scalarVector), type)
+
+  fun mag2() = SIUnit.of(scalarVector.mag2(), type)
+
   fun mag() = SIUnit.of(scalarVector.mag(), type)
   fun sum() = SIUnit.of(scalarVector.sum(), type)
   operator fun minus(other: ConcreteVector<T>) = ConcreteVector(scalarVector - other.scalarVector, type)
