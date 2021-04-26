@@ -58,7 +58,7 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
     elements = DoubleArray(0)
   }
 
-  fun norm(): ScalarVector {
+  fun normalized(): ScalarVector {
     return div(mag())
   }
 
