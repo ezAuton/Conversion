@@ -52,4 +52,6 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
 
 fun scalar(vararg vector: ConcreteVector<*>) = vector.map { it.scalarVector }
 
-inline fun <reified T : SIUnit<T>> vec(vararg elems: Double) = ConcreteVector(scalarVec(*elems), T::class)
+inline fun <reified T : SIUnit<T>> cvec(vararg elems: Double) = ConcreteVector(scalarVec(*elems), T::class)
+inline fun <reified T : SIUnit<T>> vec(vararg elems: Number) = cvec<T>(*elems.map { it.toDouble() }.toDoubleArray())
+inline fun <reified T : SIUnit<T>> origin(size: Int) = ConcreteVector(ScalarVector.origin(size), T::class)

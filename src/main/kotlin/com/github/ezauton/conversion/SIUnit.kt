@@ -11,9 +11,13 @@ interface SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
     fun <T : SIUnit<T>> of(double: Double, kClass: KClass<out SIUnit<T>>): T {
       return when (kClass) {
         Distance::class -> Distance(double)
-        AngularVelocity::class -> AngularVelocity(double)
         Time::class -> Time(double)
         LinearVelocity::class -> LinearVelocity(double) // TODO: add all implementations
+        LinearAcceleration::class -> LinearAcceleration(double)
+        AngularVelocity::class -> AngularVelocity(double) // TODO: add all implementations
+        AngularAcceleration::class -> AngularAcceleration(double)
+        Angle::class -> Angle(double)
+        Scalar::class -> Scalar(double)
         else -> throw IllegalArgumentException("unit for $kClass has not yet been defined")
       } as T
     }
@@ -50,6 +54,7 @@ operator fun <T : SIUnit<T>> Number.times(unit: T): T = SIUnit.of(unit.value * t
 operator fun <T : SIUnit<T>> Number.div(unit: T): T = SIUnit.of(unit.value / toDouble(), unit::class)
 
 fun <T: SIUnit<T>> Number.withUnit(type: KClass<T>) = SIUnit.of(toDouble(), type)
+inline fun <reified  T: SIUnit<T>> Number.withUnit() = SIUnit.of(toDouble(), T::class)
 
 inline fun <reified T: SIUnit<T>> zero() = SIUnit.of(0.0, T::class)
 inline fun <reified T: SIUnit<T>> invalid() = SIUnit.of(Double.NaN, T::class)

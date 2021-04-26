@@ -42,6 +42,9 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
   fun <T : SIUnit<T>> withUnit(kClass: KClass<out T>) =
     ConcreteVector(this, kClass)
 
+  inline fun <reified T : SIUnit<T>> withUnit() =
+    ConcreteVector(this, T::class)
+
   fun toMeasureableVector() = withUnit(Scalar::class)
 
   /**
@@ -258,3 +261,4 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
 }
 
 fun scalarVec(vararg x: Double) = ScalarVector(*x)
+fun svec(vararg x: Double) = ScalarVector(*x)

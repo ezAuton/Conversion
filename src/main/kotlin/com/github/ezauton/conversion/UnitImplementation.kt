@@ -69,7 +69,8 @@ class Time(override val value: Double) : SIUnit<Time> {
 class LinearVelocity(override val value: Double) :
   SIUnit<LinearVelocity>,
   LinearUnit,
-  TimeDerivative<Distance> by TimeDerivative.Default(value, Distance::class)
+  TimeDerivative<Distance> by TimeDerivative.Default(value, Distance::class),
+  TimeIntegral<LinearAcceleration> by TimeIntegral.Default(value, LinearAcceleration::class)
 
 class AngularVelocity(override val value: Double) :
   SIUnit<AngularVelocity>,
@@ -127,11 +128,10 @@ val Number.mps get() = Units.mps(this)
 val Number.millis get() = Units.ms(this)
 val Number.ms get() = Units.ms(this)
 val Number.meters get() = Units.meter(this)
+val Number.m get() = Units.meter(this)
 val Number.seconds get() = Units.sec(this)
 
 val sec = 1.0.seconds
-
-fun <T : SIUnit<T>> cvec(type: KClass<out T>, vararg x: Double) = scalarVec(*x).withUnit(type)
 
 fun <T : SIUnit<T>> min(a: ConcreteVector<T>, b: ConcreteVector<T>) = if (a.scalarVector.mag2() > b.scalarVector.mag2()) b else a
 fun <T : SIUnit<T>> max(a: ConcreteVector<T>, b: ConcreteVector<T>) = if (a.scalarVector.mag2() < b.scalarVector.mag2()) b else a
