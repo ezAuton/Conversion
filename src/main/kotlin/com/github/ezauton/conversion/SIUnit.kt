@@ -8,6 +8,8 @@ interface SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
   val value: Double
 
   companion object {
+
+    @Suppress("UNCHECKED_CAST")
     fun <T : SIUnit<T>> of(double: Double, kClass: KClass<out SIUnit<T>>): T {
       return when (kClass) {
         Distance::class -> Distance(double)
@@ -31,6 +33,8 @@ interface SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
   override fun compareTo(other: SIUnit<T>) = value.compareTo(other.value)
   operator fun rangeTo(other: T) = object : ClosedFloatingPointRange<T> {
     override val endInclusive: T get() = other
+
+    @Suppress("UNCHECKED_CAST")
     override val start: T get() = this@SIUnit as T
     override fun lessThanOrEquals(a: T, b: T): Boolean = a.value <= b.value
   }

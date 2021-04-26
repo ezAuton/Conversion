@@ -16,6 +16,9 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
     }
   }
 
+
+
+
   val dimension: Int get() = scalarVector.dimension
 
   val isFinite: Boolean get() = scalarVector.isFinite
@@ -47,6 +50,11 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
 
 
   operator fun minus(other: ConcreteVector<T>) = ConcreteVector(scalarVector - other.scalarVector, type)
+  override fun toString(): String {
+    val elements = scalarVector.elements.joinToString()
+    val typeStr = type.simpleName!!
+    return "${typeStr}[${elements}]"
+  }
 
 }
 
