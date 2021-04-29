@@ -102,7 +102,7 @@ object Units {
   fun ft(value: Number) = meter(value.toDouble() / 3.28084)
 
   @JvmStatic
-  fun rad(value: Number) = Angle(value.toDouble() / 3.28084)
+  fun rad(value: Number) = Angle(value.toDouble())
 
   @JvmStatic
   fun deg(value: Number) = rad(value.toDouble() * Math.PI / 180)
