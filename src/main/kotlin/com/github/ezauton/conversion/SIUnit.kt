@@ -4,8 +4,8 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 
-interface SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
-  val value: Double
+abstract class SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
+  abstract val value: Double
 
   companion object {
 
@@ -25,6 +25,13 @@ interface SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
     }
   }
 
+  override fun toString(): String {
+    val typeStr = this.javaClass.simpleName
+    val valueStr = "%.2f".format(value)
+    return "${typeStr}($valueStr)"
+  }
+
+
   operator fun minus(other: T) = of(value - other.value, other::class)
   operator fun plus(other: T) = of(value + other.value, other::class)
   operator fun div(other: T) = value / other.value
@@ -35,7 +42,9 @@ interface SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
     override val endInclusive: T get() = other
 
     @Suppress("UNCHECKED_CAST")
-    override val start: T get() = this@SIUnit as T
+    override val start: T
+      get() = this@SIUnit as T
+
     override fun lessThanOrEquals(a: T, b: T): Boolean = a.value <= b.value
   }
 
@@ -57,10 +66,10 @@ interface SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
 operator fun <T : SIUnit<T>> Number.times(unit: T): T = SIUnit.of(unit.value * toDouble(), unit::class)
 operator fun <T : SIUnit<T>> Number.div(unit: T): T = SIUnit.of(unit.value / toDouble(), unit::class)
 
-fun <T: SIUnit<T>> Number.withUnit(type: KClass<T>) = SIUnit.of(toDouble(), type)
-inline fun <reified  T: SIUnit<T>> Number.withUnit() = SIUnit.of(toDouble(), T::class)
+fun <T : SIUnit<T>> Number.withUnit(type: KClass<T>) = SIUnit.of(toDouble(), type)
+inline fun <reified T : SIUnit<T>> Number.withUnit() = SIUnit.of(toDouble(), T::class)
 
-inline fun <reified T: SIUnit<T>> zero() = SIUnit.of(0.0, T::class)
-inline fun <reified T: SIUnit<T>> invalid() = SIUnit.of(Double.NaN, T::class)
-inline fun <reified T: SIUnit<T>> SI(value: Double) = SIUnit.of(value, T::class)
-val <T: SIUnit<T>> T.s get() = value
+inline fun <reified T : SIUnit<T>> zero() = SIUnit.of(0.0, T::class)
+inline fun <reified T : SIUnit<T>> invalid() = SIUnit.of(Double.NaN, T::class)
+inline fun <reified T : SIUnit<T>> SI(value: Double) = SIUnit.of(value, T::class)
+val <T : SIUnit<T>> T.s get() = value

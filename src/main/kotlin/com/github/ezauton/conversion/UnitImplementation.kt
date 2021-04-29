@@ -47,17 +47,17 @@ interface DistanceIntegral<T> {
 }
 
 class Distance(override val value: Double) :
-  SIUnit<Distance>,
+  SIUnit<Distance>(),
   LinearUnit,
   TimeIntegral<LinearVelocity> by TimeIntegral.Default(value, LinearVelocity::class)
 
 class Angle(override val value: Double) :
-  SIUnit<Angle>,
+  SIUnit<Angle>(),
   AngularUnit,
   TimeIntegral<AngularVelocity> by TimeIntegral.Default(value, AngularVelocity::class),
   DistanceDerivative<Distance> by DistanceDerivative.Default(value, Distance::class) // TODO: is this right to call it a derivative?
 
-class Time(override val value: Double) : SIUnit<Time> {
+class Time(override val value: Double) : SIUnit<Time>() {
   val millisL get() = millis.toLong()
   val millis get() = value * 1_000
   val seconds get() = value
@@ -67,30 +67,30 @@ class Time(override val value: Double) : SIUnit<Time> {
 }
 
 class LinearVelocity(override val value: Double) :
-  SIUnit<LinearVelocity>,
+  SIUnit<LinearVelocity>(),
   LinearUnit,
   TimeDerivative<Distance> by TimeDerivative.Default(value, Distance::class),
   TimeIntegral<LinearAcceleration> by TimeIntegral.Default(value, LinearAcceleration::class)
 
 class AngularVelocity(override val value: Double) :
-  SIUnit<AngularVelocity>,
+  SIUnit<AngularVelocity>(),
   AngularUnit,
   TimeDerivative<Angle> by TimeDerivative.Default(value, Angle::class),
   DistanceDerivative<LinearVelocity> by DistanceDerivative.Default(value, LinearVelocity::class)
 
 class AngularAcceleration(override val value: Double) :
-  SIUnit<AngularVelocity>,
+  SIUnit<AngularVelocity>(),
   AngularUnit,
   TimeDerivative<AngularVelocity> by TimeDerivative.Default(value, AngularVelocity::class),
   DistanceDerivative<AngularVelocity> by DistanceDerivative.Default(value, AngularVelocity::class)
 
 
 class LinearAcceleration(override val value: Double) :
-  SIUnit<LinearAcceleration>,
+  SIUnit<LinearAcceleration>(),
   LinearUnit,
   TimeDerivative<LinearVelocity> by TimeDerivative.Default(value, LinearVelocity::class)
 
-class Scalar(override val value: Double) : SIUnit<Scalar>
+class Scalar(override val value: Double) : SIUnit<Scalar>()
 
 fun now() = Units.now() // kinda jank
 
