@@ -1,7 +1,38 @@
 package com.github.ezauton.conversion
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlin.reflect.KClass
 
+
+@Serializable
+data class ConcreteVectorWrapper(val scalarVector: ScalarVector, val id: Int)
+
+class ConcreteVectorSerializer<T : SIUnit<T>>(private val dataSerializer: KSerializer<T>): KSerializer<ConcreteVector<T>> {
+
+  override fun deserialize(decoder: Decoder): ConcreteVector<T> {
+    val wrapper = decoder.decodeSerializableValue(ConcreteVectorWrapper.serializer())
+    val type = classList[wrapper.id]
+    val scalarVector = wrapper.scalarVector
+    return ConcreteVector<T>(scalarVector, type as Nothing) // TODO: really jank type stuff here
+  }
+
+  override val descriptor: SerialDescriptor = dataSerializer.descriptor
+
+
+  override fun serialize(encoder: Encoder, value: ConcreteVector<T>) {
+    val idx = classList.indexOfFirst { it == value.type }
+    val wrapper = ConcreteVectorWrapper(value.scalarVector, idx)
+    encoder.encodeSerializableValue(ConcreteVectorWrapper.serializer(), wrapper)
+  }
+
+
+}
+
+@Serializable(with = ConcreteVectorSerializer::class)
 class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KClass<out T>) {
 
   companion object {
@@ -15,8 +46,6 @@ class ConcreteVector<T : SIUnit<T>>(val scalarVector: ScalarVector, val type: KC
       )
     }
   }
-
-
 
 
   val dimension: Int get() = scalarVector.dimension
@@ -62,4 +91,6 @@ fun scalar(vararg vector: ConcreteVector<*>) = vector.map { it.scalarVector }
 
 inline fun <reified T : SIUnit<T>> cvec(vararg elems: Double) = ConcreteVector(scalarVec(*elems), T::class)
 inline fun <reified T : SIUnit<T>> vec(vararg elems: Number) = cvec<T>(*elems.map { it.toDouble() }.toDoubleArray())
+inline fun <reified T : SIUnit<T>> vec(vararg elems: SIUnit<T>) = cvec<T>(*elems.map { it.value }.toDoubleArray())
+inline fun <reified T : SIUnit<T>> vec() = cvec<T>()
 inline fun <reified T : SIUnit<T>> origin(size: Int) = ConcreteVector(ScalarVector.origin(size), T::class)

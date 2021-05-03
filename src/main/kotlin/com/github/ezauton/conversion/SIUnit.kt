@@ -4,6 +4,17 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.reflect.KClass
 
+val classList = listOf(
+  Distance::class,
+  Time::class,
+  LinearVelocity::class,
+  LinearAcceleration::class,
+  AngularVelocity::class,
+  AngularAcceleration::class,
+  Angle::class,
+  Scalar::class,
+)
+
 abstract class SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
   abstract val value: Double
 
@@ -32,7 +43,6 @@ abstract class SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
   }
 
 
-
   operator fun minus(other: T) = of(value - other.value, other::class)
   operator fun plus(other: T) = of(value + other.value, other::class)
   operator fun div(other: T) = value / other.value
@@ -51,11 +61,11 @@ abstract class SIUnit<T : SIUnit<T>> : Comparable<SIUnit<T>> {
 
   fun abs() = of(value.absoluteValue, this::class)
 
-  val isPositive get() = this.value > 0.001
-  val isNegative get() = this.value < 0.001
-  val isZero get() = abs(this.value) <= 0.001
-  val isExactZero get() = this.value == 0.0
-  val isNonZero get() = abs(this.value) > 0.001
+  val isPositive get() = this.value > 0.00
+  val isNegative get() = this.value < 0.00
+  val isApproxZero get() = abs(this.value) <= 0.001
+  val isZero get() = this.value == 0.0
+  val isNonZero get() = this.value != 0.00
   val isFinite get() = this.value.isFinite()
   val isInfinite get() = this.value.isInfinite()
   val isNaN get() = this.value.isNaN()

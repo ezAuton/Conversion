@@ -1,8 +1,9 @@
 package com.github.ezauton.conversion
 
-import java.io.Serializable
+import kotlinx.serialization.Serializable
 import java.util.*
 import java.util.stream.DoubleStream
+import kotlin.math.abs
 import kotlin.reflect.KClass
 
 typealias Operator = (Double, Double) -> Double
@@ -15,7 +16,8 @@ operator fun Double.times(n: ScalarVector): ScalarVector {
 /**
  * An n-dimensional, immutable vector.
  */
-class ScalarVector : Serializable, Comparable<ScalarVector> {
+@Serializable
+class ScalarVector(val elements: DoubleArray): Comparable<ScalarVector> {
   override fun compareTo(other: ScalarVector): Int {
     other.assertDimension(dimension)
     for (i in 0 until dimension) {
@@ -26,15 +28,10 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
     return 0
   }
 
-  val elements: DoubleArray
 
   val dimension: Int get() = elements.size
 
   val isFinite: Boolean get() = elements.all { it.isFinite() }
-
-  constructor(vararg x: Double) {
-    this.elements = x
-  }
 
   operator fun <T : SIUnit<T>> times(unit: T) =
     ConcreteVector(times(unit.value), unit::class)
@@ -52,19 +49,12 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
    *
    * @param list
    */
-  constructor(list: List<Double>) {
-    elements = DoubleArray(list.size)
-    for (i in list.indices) {
-      elements[i] = list[i]
-    }
-  }
+  constructor(list: List<Double>): this(list.toDoubleArray())
 
   /**
    * A 0-dimensional ScalarVector... how sad 😭
    */
-  constructor() {
-    elements = DoubleArray(0)
-  }
+  constructor(): this(DoubleArray(0))
 
   fun normalized(): ScalarVector {
     return div(mag())
@@ -130,7 +120,7 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
     for (i in elements.indices) {
       temp[i] = operator(elements[i], other.elements[i])
     }
-    return ScalarVector(*temp)
+    return ScalarVector(temp)
   }
 
   operator fun minus(other: ScalarVector): ScalarVector {
@@ -198,7 +188,7 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
       return false
     }
     for (i in 0 until dimension) {
-      if (Math.abs(that.elements[i] - elements[i]) > 1E-6)
+      if (abs(that.elements[i] - elements[i]) > 1E-6)
       // epsilon eq
       {
         return false
@@ -208,12 +198,12 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
   }
 
   override fun hashCode(): Int {
-    return Arrays.hashCode(elements)
+    return elements.contentHashCode()
   }
 
   override fun toString(): String {
     return "ScalarVector{" +
-        "elements=" + Arrays.toString(elements) +
+        "elements=" + elements.contentToString() +
         '}'.toString()
   }
 
@@ -224,7 +214,7 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
       for (i in 0 until size) {
         elements[i] = element
       }
-      return ScalarVector(*elements)
+      return ScalarVector(elements)
     }
 
     /**
@@ -258,7 +248,19 @@ class ScalarVector : Serializable, Comparable<ScalarVector> {
     override val start: ScalarVector
       get() = other
   }
+
+  operator fun component1(): Double {
+    return get(0)
+  }
+  operator fun component2(): Double {
+    return get(1)
+  }
+
+  operator fun component3(): Double {
+    return get(2)
+  }
 }
 
-fun scalarVec(vararg x: Double) = ScalarVector(*x)
-fun svec(vararg x: Double) = ScalarVector(*x)
+fun scalarVec(vararg x: Double) = ScalarVector(x)
+fun svec(vararg x: Double) = ScalarVector(x)
+fun svec(vararg x: Number) = ScalarVector(x.map { it.toDouble() }.toDoubleArray())
